@@ -34,6 +34,7 @@ export const AuthService = {
 
   logout: async () => {
     await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("patientId");
   },
 
   getCurrentToken: async () => {
@@ -42,7 +43,10 @@ export const AuthService = {
 
   getCurrentUser: async () => {
     try {
+
+      console.log("Get current user");
       const token = await AsyncStorage.getItem("token");
+      console.log(token);
       if (!token) {
         throw { message: "No token found" };
       }
@@ -53,10 +57,13 @@ export const AuthService = {
         },
       });
 
-      console.log("RESPONSE", response.data);
+      //console.log("RESPONSE", response.data);
+
+      await AsyncStorage.setItem("patientId", response.data._id);
 
       return response.data;
     } catch (error) {
+      console.log("ERROR");
       throw error.response?.data || { message: "Something went wrong" };
     }
   },

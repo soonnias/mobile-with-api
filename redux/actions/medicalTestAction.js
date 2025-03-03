@@ -41,7 +41,9 @@ export const getMedicalTestById = (id) => async (dispatch) => {
 // Отримання тестів за ID пацієнта
 export const getMedicalTestsByPatientId = (patientId) => async (dispatch) => {
   try {
+    console.log("get medical tests by patientId", patientId);
     const data = await getTestsByPatientId(patientId);
+    console.log("data", data);
     dispatch({ type: GET_TESTS_BY_PATIENT_ID, payload: data });
   } catch (error) {
     dispatch({ type: MEDICAL_TEST_ERROR, payload: error.message });

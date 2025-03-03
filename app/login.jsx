@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import {View, Text, TextInput, Button, StyleSheet, TouchableOpacity} from "react-native";
 import { router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthService } from "../api/authService";
-import MaskInput from 'react-native-mask-input'; // Імпортуйте компонент маски
+import MaskInput from 'react-native-mask-input';
+import {Colors} from "../constants/Colors"; // Імпортуйте компонент маски
 
 export default function LoginScreen() {
     const [formData, setFormData] = useState({
@@ -49,12 +50,12 @@ export default function LoginScreen() {
 
             if (userRole === "user" && userId) {
                 await AsyncStorage.setItem("id", userId);
-                router.push(`/(authenticated)/info/${userId}`);
+                router.push(`/(authenticated)/profile`);
             } else {
                 router.push("/(authenticated)/patients");
             }
         } catch (error) {
-            console.error(error);
+            //console.error(error);
             setError("Сталася помилка при вході.");
         } finally {
             setLoading(false);
@@ -69,9 +70,9 @@ export default function LoginScreen() {
                 if (token) {
                     const id = await AsyncStorage.getItem("id");
                     if (id) {
-                        router.replace(`/(authenticated)/info/${id}`);
+                        router.push(`/(authenticated)/profile`);
                     } else {
-                        router.replace("/(authenticated)/patients");
+                        router.push("/(authenticated)/patients");
                     }
                 }
             } catch (error) {
@@ -116,11 +117,16 @@ export default function LoginScreen() {
                 />
             </View>
 
-            <Button
-                title={loading ? "Вхід..." : "Увійти"}
+            <TouchableOpacity
                 onPress={handleSubmit}
                 disabled={loading}
-            />
+                style={[styles.button, loading && styles.buttonDisabled]}
+            >
+                <Text style={styles.buttonText}>
+                    {loading ? "Вхід..." : "Увійти"}
+                </Text>
+            </TouchableOpacity>
+
         </View>
     );
 };
@@ -156,5 +162,19 @@ const styles = StyleSheet.create({
         color: "red",
         marginBottom: 10,
         textAlign: "center",
+    },
+    button: {
+        marginTop: 20,
+        backgroundColor: Colors.light.primary,
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        alignItems: 'center',
+        width: '100%',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

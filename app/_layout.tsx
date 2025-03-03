@@ -1,14 +1,17 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import 'react-native-reanimated';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack } from 'expo-router';
+import { Provider } from 'react-redux';
+import store from "@/redux/store";  // Імпорт Provider
 
-SplashScreen.preventAutoHideAsync();
+import { router } from "expo-router";
+
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -25,7 +28,9 @@ export default function RootLayout() {
         const token = await AsyncStorage.getItem('token');
         setIsAuthenticated(token !== null && token !== undefined);
       } catch (error) {
-        console.error("Помилка при перевірці автентифікації:", error);
+        console.error('Помилка при перевірці автентифікації:', error);
+        await AsyncStorage.removeItem('token');
+        router.push("/login");
         setIsAuthenticated(false);
       } finally {
         setAuthChecked(true);
@@ -34,6 +39,19 @@ export default function RootLayout() {
 
     checkAuthStatus();
   }, []);
+
+  /*const clearStorage = async () => {
+      try {
+          await AsyncStorage.clear();
+          console.log("AsyncStorage очищено");
+          router.push("/login")
+      } catch (error) {
+          console.error("Помилка при очищенні AsyncStorage:", error);
+      }
+  };
+
+  // Виклик функції
+  clearStorage();*/
 
   useEffect(() => {
     if (loaded && authChecked) {
@@ -48,23 +66,19 @@ export default function RootLayout() {
   console.log('isAuthenticated:', isAuthenticated);
 
   return (
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen
-              name="index"
-              options={{ headerShown: false }}
-          />
-          <Stack.Screen
-              name="login"
-              options={{ headerShown: false }}
-          />
+      <Provider store={store}>  {/* Обгортаємо весь додаток в Provider */}
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack screenOptions={{ headerShown: false }}>
+            {isAuthenticated ? (
+                <Stack.Screen name="(authenticated)" options={{ headerShown: false }} />
+            ) : (
+                <Stack.Screen name="login" options={{ headerShown: false }} />
+            )}
 
-          <Stack.Screen
-              name="+not-found"
-              options={{ title: 'Oops!' }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+            <Stack.Screen name="+not-found" options={{ title: 'Oops!' }} />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </Provider>
   );
 }

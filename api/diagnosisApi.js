@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://localhost:3000/diagnosis";
+const BASE_URL = "http://192.168.0.101:3000/diagnosis";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

@@ -60,7 +60,7 @@ const TestsScreen = () => {
 
     if (loading) {
         return (
-            <View style={styles.container}>
+            <View style={styles.centeredContainer}>
                 <ActivityIndicator size="large" color={Colors.light.primary} />
             </View>
         );
@@ -79,7 +79,7 @@ const TestsScreen = () => {
                     renderItem={({ item }) => (
                         <View style={styles.testItem}>
                             <Text style={styles.testTitle}>{item.testTypeId?.name}</Text>
-                            <Text style={styles.testDate}>{new Date(item.testDate).toLocaleDateString()}</Text>
+                            <Text style={styles.testDate}>{new Date(item.testDate).toLocaleDateString("uk-UA")}</Text>
                             <Text><Text style={styles.label}>Статус:</Text> {item.status}</Text>
                             <Text><Text style={styles.label}>Результат:</Text> {item.result}</Text>
                             <Text><Text style={styles.label}>Рекомендації:</Text> {item.recommendations || "Немає"}</Text>
@@ -101,10 +101,16 @@ const TestsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    centeredContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
     container: {
         flex: 1,
         padding: 16,
         alignItems: 'center',
+        width: '100%',
     },
     title: {
         fontSize: 24,
@@ -126,6 +132,8 @@ const styles = StyleSheet.create({
         padding: 12,
         marginVertical: 6,
         borderRadius: 8,
+        alignSelf: 'stretch',
+        width: '100%',
     },
     testTitle: {
         fontSize: 18,
@@ -160,3 +168,4 @@ const styles = StyleSheet.create({
 });
 
 export default TestsScreen;
+

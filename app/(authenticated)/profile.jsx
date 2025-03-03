@@ -30,7 +30,7 @@ const ProfileScreen = () => {
 
     if (loading) {
         return (
-            <View style={styles.container}>
+            <View style={styles.centeredContainer}>
                 <ActivityIndicator size="large" color={Colors.light.primary} />
             </View>
         );
@@ -77,6 +77,11 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    centeredContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
     container: {
         flex: 1,
         justifyContent: "flex-start",

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import {getAllDiagnosisByPatientIdAction} from "../../redux/actions/diagnosisAction";
+import { getAllDiagnosisByPatientIdAction } from "../../redux/actions/diagnosisAction";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card } from "react-native-paper";
-
+import { Colors } from "../../constants/Colors";
 
 const DiagnosesScreen = () => {
     const dispatch = useDispatch();
@@ -30,20 +30,28 @@ const DiagnosesScreen = () => {
         fetchPatientId();
     }, []);
 
+    // Завантажуємо діагнози після отримання patientId
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            await dispatch(getAllDiagnosisByPatientIdAction(patientId));
-            setLoading(false);
-        };
+        if (patientId) {
+            const fetchData = async () => {
+                try {
+                    setLoading(true);
+                    await dispatch(getAllDiagnosisByPatientIdAction(patientId));
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Error fetching diagnoses:', error);
+                    setLoading(false);
+                }
+            };
 
-        fetchData();
+            fetchData();
+        }
     }, [dispatch, patientId]);
 
     if (loading) {
         return (
             <View style={styles.centeredContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color={Colors.light.primary} />
             </View>
         );
     }
@@ -58,22 +66,28 @@ const DiagnosesScreen = () => {
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={diagnosis_by_patient}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                    <Card style={styles.card}>
-                        <Card.Content>
-                            <Text style={styles.title}>{item.diagnosisName}</Text>
-                            <Text style={styles.description}>{item.description}</Text>
-                            <Text style={styles.date}>
-                                Діагноз поставлений: {new Date(item.diagnosisDate).toLocaleDateString()}
-                            </Text>
-                        </Card.Content>
-                    </Card>
-                )}
-                ListEmptyComponent={<Text style={styles.emptyText}>Немає діагнозів для цього пацієнта</Text>}
-            />
+            <Text style={styles.title}>Діагнози</Text>
+            {diagnosis_by_patient.length === 0 ? (
+                <Text style={styles.emptyText}>Немає діагнозів для цього пацієнта</Text>
+            ) : (
+                <FlatList
+                    data={diagnosis_by_patient}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => (
+                        <Card style={styles.card}>
+                            <Card.Content>
+                                <Text style={styles.cardTitle}>{item.diagnosisName}</Text>
+                                <Text style={styles.description}>{item.description}</Text>
+                                <Text style={styles.date}>
+                                    Діагноз поставлений: {new Date(item.diagnosisDate).toLocaleDateString("uk-UA")}
+                                </Text>
+
+
+                            </Card.Content>
+                        </Card>
+                    )}
+                />
+            )}
         </View>
     );
 };
@@ -89,15 +103,19 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    errorText: {
-        color: "red",
-        fontSize: 16,
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 20,
+        color: "#333",
+        textAlign: "center",
     },
     card: {
+        width: "100%",
         marginBottom: 10,
         padding: 10,
     },
-    title: {
+    cardTitle: {
         fontSize: 18,
         fontWeight: "bold",
     },
@@ -114,6 +132,11 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 16,
         marginTop: 20,
+    },
+    errorText: {
+        color: "red",
+        fontSize: 16,
+        textAlign: "center",
     },
 });
 

@@ -52,7 +52,7 @@ export default function LoginScreen() {
                 await AsyncStorage.setItem("id", userId);
                 router.push(`/(authenticated)/profile`);
             } else {
-                router.push("/(authenticated)/patients");
+                router.push("/(authenticated)/profile");
             }
         } catch (error) {
             //console.error(error);
@@ -72,7 +72,7 @@ export default function LoginScreen() {
                     if (id) {
                         router.push(`/(authenticated)/profile`);
                     } else {
-                        router.push("/(authenticated)/patients");
+                        router.push("/(authenticated)/profile");
                     }
                 }
             } catch (error) {

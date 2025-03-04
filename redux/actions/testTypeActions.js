@@ -9,6 +9,7 @@ export const CREATE_TEST_TYPE = "CREATE_TEST_TYPE";
 export const UPDATE_TEST_TYPE = "UPDATE_TEST_TYPE";
 export const DELETE_TEST_TYPE = "DELETE_TEST_TYPE";
 export const TEST_TYPE_ERROR = "TEST_TYPE_ERROR";
+export const TEST_TYPE_ERROR_CLEAR = "TEST_TYPE_ERROR_CLEAR";
 
 // Отримання всіх типів тестів
 export const getTestTypes = () => async (dispatch) => {
@@ -51,3 +52,12 @@ export const deleteTestTypeAction = (id) => async (dispatch) => {
     dispatch({ type: TEST_TYPE_ERROR, payload: error.message });
   }
 };
+
+
+export const clearError = () => async (dispatch) => {
+  try {
+    dispatch({ type: TEST_TYPE_ERROR_CLEAR });
+  } catch (error) {
+    dispatch({ type: TEST_TYPE_ERROR, payload: error.message });
+  }
+}

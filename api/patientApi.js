@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://localhost:3000/patients";
+const BASE_URL = "http://192.168.0.101:3000/patients";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -36,9 +36,12 @@ export const fetchPatients = async () => {
 // Створення нового пацієнту
 export const createPatients = async (patientsData) => {
   try {
+    console.log("create patient api", patientsData);
     const response = await axiosInstance.post("/", patientsData);
+    console.log("response patient api", response.data);
     return response.data;
   } catch (error) {
+    console.log(error.response?.data?.message || "Error creating patients");
     throw new Error(error.response?.data?.message || "Error creating patient");
   }
 };

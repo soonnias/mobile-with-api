@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Базова URL для запитів
-const BASE_URL = "http://localhost:3000/test-types";
+const BASE_URL = "http://192.168.0.101:3000/test-types";
 
 // Налаштування інстансу Axios
 const axiosInstance = axios.create({

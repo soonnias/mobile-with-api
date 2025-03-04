@@ -12,7 +12,6 @@ import store from "@/redux/store";  // Імпорт Provider
 
 import { router } from "expo-router";
 
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -20,6 +19,7 @@ export default function RootLayout() {
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -27,6 +27,12 @@ export default function RootLayout() {
       try {
         const token = await AsyncStorage.getItem('token');
         setIsAuthenticated(token !== null && token !== undefined);
+
+        const id = await AsyncStorage.getItem('patientId');
+        if (!id) {
+          setIsAdmin(true);  // Якщо відсутній patientId, вважаємо, що це адмін
+        }
+
       } catch (error) {
         console.error('Помилка при перевірці автентифікації:', error);
         await AsyncStorage.removeItem('token');
@@ -41,17 +47,17 @@ export default function RootLayout() {
   }, []);
 
   /*const clearStorage = async () => {
-      try {
-          await AsyncStorage.clear();
-          console.log("AsyncStorage очищено");
-          router.push("/login")
-      } catch (error) {
-          console.error("Помилка при очищенні AsyncStorage:", error);
-      }
-  };
+       try {
+           await AsyncStorage.clear();
+           console.log("AsyncStorage очищено");
+           router.push("/login")
+       } catch (error) {
+           console.error("Помилка при очищенні AsyncStorage:", error);
+       }
+   };
 
-  // Виклик функції
-  clearStorage();*/
+   // Виклик функції
+   clearStorage();*/
 
   useEffect(() => {
     if (loaded && authChecked) {
@@ -63,14 +69,17 @@ export default function RootLayout() {
     return null;
   }
 
-  console.log('isAuthenticated:', isAuthenticated);
 
   return (
       <Provider store={store}>  {/* Обгортаємо весь додаток в Provider */}
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack screenOptions={{ headerShown: false }}>
             {isAuthenticated ? (
-                <Stack.Screen name="(authenticated)" options={{ headerShown: false }} />
+                isAdmin ? (
+                    <Stack.Screen name="admin" options={{ headerShown: false }} />
+                ) : (
+                    <Stack.Screen name="authenticated" options={{ headerShown: false }} />
+                )
             ) : (
                 <Stack.Screen name="login" options={{ headerShown: false }} />
             )}

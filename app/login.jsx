@@ -38,7 +38,6 @@ export default function LoginScreen() {
         }
 
         try {
-            console.log("IN TRY CATCH");
             const response = await AuthService.login(formData);
             const user = await AuthService.getCurrentUser();
 
@@ -52,7 +51,7 @@ export default function LoginScreen() {
                 await AsyncStorage.setItem("id", userId);
                 router.push(`/(authenticated)/profile`);
             } else {
-                router.push("/(authenticated)/profile");
+                router.push("/(admin)/patients");
             }
         } catch (error) {
             //console.error(error);
@@ -72,7 +71,7 @@ export default function LoginScreen() {
                     if (id) {
                         router.push(`/(authenticated)/profile`);
                     } else {
-                        router.push("/(authenticated)/profile");
+                        router.push("/(admin)/patients");
                     }
                 }
             } catch (error) {

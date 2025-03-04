@@ -4,6 +4,7 @@ import {
   UPDATE_TEST_TYPE,
   DELETE_TEST_TYPE,
   TEST_TYPE_ERROR,
+    TEST_TYPE_ERROR_CLEAR,
 } from "../actions/testTypeActions";
 
 const initialState = {
@@ -33,6 +34,8 @@ const testTypeReducer = (state = initialState, action) => {
       };
     case TEST_TYPE_ERROR:
       return { ...state, error: action.payload };
+    case TEST_TYPE_ERROR_CLEAR:
+      return { ...state, error: "" };
     default:
       return state;
   }

@@ -1,11 +1,19 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
+import {router, Tabs} from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import {Text, View} from "react-native";
+import {Text, TouchableOpacity, View} from "react-native";
 import {Colors} from "../../constants/Colors";
+import {AuthService} from "../../api/authService";
 
-export default function AuthenticatedLayout() {
-    console.log("Authenticated Layout Page");
+export default function AdminLayout() {
+    console.log("Admin Layout Page");
+
+    // Функція для виходу
+    const handleLogout = async () => {
+        await AuthService.logout();
+        router.push('/login');
+    };
+
     return (
         <Tabs
             screenOptions={{
@@ -22,6 +30,13 @@ export default function AuthenticatedLayout() {
                         </Text>
                     </View>
                 ),
+                headerRight: () => (
+                    <TouchableOpacity onPress={handleLogout} style={{ marginRight: 15 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#fff' }}>
+                            Вийти
+                        </Text>
+                    </TouchableOpacity>
+                ),
             }}
         >
             {/* Hide the index route from the tab bar */}
@@ -33,7 +48,17 @@ export default function AuthenticatedLayout() {
             />
 
             <Tabs.Screen
-                name="diagnosis"
+                name="patients"
+                options={{
+                    tabBarLabel: 'Пацієнти',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="person" size={size} color={color} />
+                    )
+                }}
+            />
+
+            <Tabs.Screen
+                name="diagnosisAdmin"
                 options={{
                     tabBarLabel: 'Діагнози',
                     tabBarIcon: ({ color, size }) => (
@@ -41,24 +66,17 @@ export default function AuthenticatedLayout() {
                     )
                 }}
             />
+
             <Tabs.Screen
-                name="tests"
+                name="testTypes"
                 options={{
-                    tabBarLabel: 'Тести',
+                    tabBarLabel: 'Типи тестів',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="list" size={size} color={color} />
+                        <Ionicons name="hand-right-outline" size={size} color={color} />
                     )
                 }}
             />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    tabBarLabel: 'Профіль',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="person" size={size} color={color} />
-                    )
-                }}
-            />
+
         </Tabs>
     );
 }
